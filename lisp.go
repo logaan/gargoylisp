@@ -5,14 +5,13 @@ import (
 	"fmt"
 	"os"
 	"regexp"
-	"strings"
 )
 
 type number struct{ value int }
 type symbol struct{ name string }
 
 // List(expression)
-type mylist struct{ elements []interface{} }
+type list struct{ elements []interface{} }
 type function struct{ name string }
 type lambda struct {
 	// string -> expression
@@ -24,7 +23,8 @@ type lambda struct {
 
 func main() {
 	tokens := tokenise(readStdin())
-	fmt.Printf("%v\n", strings.Join(tokens, ", "))
+	expression := read(tokens)
+	fmt.Printf("%+v\n", expression)
 }
 
 func popString(slice []string) (string, []string) {
@@ -37,7 +37,11 @@ func popString(slice []string) (string, []string) {
 func read(tokens []string) interface{} {
 	token, tokens := popString(tokens)
 	if token == "(" {
-		list := mylist{[]interface{}{}}
+		list := list{[]interface{}{}}
+		for tokens[0] != ")" {
+			list.elements = append(list.elements, read(tokens))
+		}
+		_, tokens = popString(tokens)
 		return list
 	} else {
 		return symbol{token}
