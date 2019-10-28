@@ -1,0 +1,3 @@
+A toy lisp written in golang.
+
+Edit the source file in ~program.lisp~ and run with ~./run~.
