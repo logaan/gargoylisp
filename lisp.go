@@ -8,13 +8,13 @@ import (
 	"strings"
 )
 
-type Number struct{ value int }
-type Symbol struct{ name string }
+type number struct{ value int }
+type symbol struct{ name string }
 
 // List(expression)
-type List struct{ elements []interface{} }
-type Function struct{ name string }
-type Lambda struct {
+type mylist struct{ elements []interface{} }
+type function struct{ name string }
+type lambda struct {
 	// string -> expression
 	environment map[string]interface{}
 	parameters  []string
@@ -23,16 +23,25 @@ type Lambda struct {
 }
 
 func main() {
-	tokens := popString(tokenise(readStdin()))
+	tokens := tokenise(readStdin())
 	fmt.Printf("%v\n", strings.Join(tokens, ", "))
 }
 
-func popString(slice []string) []string {
-	return append(slice[:0], slice[1:]...)
+func popString(slice []string) (string, []string) {
+	head := slice[0]
+	tail := append(slice[:0], slice[1:]...)
+	return head, tail
 }
 
-func read(tokens []string) []interface{} {
-	return []interface{}{Number{1}}
+// Should be handling unexpected ")" but exceptions
+func read(tokens []string) interface{} {
+	token, tokens := popString(tokens)
+	if token == "(" {
+		list := mylist{[]interface{}{}}
+		return list
+	} else {
+		return symbol{token}
+	}
 }
 
 func tokenise(program string) []string {
