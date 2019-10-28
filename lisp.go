@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"regexp"
+	"strconv"
 )
 
 type number struct{ value int }
@@ -44,8 +45,17 @@ func read(tokens []string) interface{} {
 		_, tokens = popString(tokens)
 		return list
 	} else {
+		return atom(token)
+	}
+}
+
+func atom(token string) interface{} {
+	i, err := strconv.Atoi(token)
+	if err != nil {
 		return symbol{token}
 	}
+
+	return number{i}
 }
 
 func tokenise(program string) []string {
