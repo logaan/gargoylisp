@@ -5,15 +5,41 @@ import (
 	"fmt"
 	"os"
 	"regexp"
+	"strings"
 )
 
+type Number struct{ value int }
+type Symbol struct{ name string }
+
+// List(expression)
+type List struct{ elements []interface{} }
+type Function struct{ name string }
+type Lambda struct {
+	// string -> expression
+	environment map[string]interface{}
+	parameters  []string
+	// expression
+	body interface{}
+}
+
 func main() {
-	fmt.Printf("%v\n", tokenise(readStdin()))
+	tokens := popString(tokenise(readStdin()))
+	fmt.Printf("%v\n", strings.Join(tokens, ", "))
+}
+
+func popString(slice []string) []string {
+	return append(slice[:0], slice[1:]...)
+}
+
+func read(tokens []string) []interface{} {
+	return []interface{}{Number{1}}
 }
 
 func tokenise(program string) []string {
-	spaced := regexp.MustCompile("[()]").ReplaceAllString(program, " $0 ")
-	return regexp.MustCompile("[ \n]+").Split(spaced, -1)
+	padded := " " + program + " "
+	spaced := regexp.MustCompile("[()]").ReplaceAllString(padded, " $0 ")
+	withPadding := regexp.MustCompile("[ \n]+").Split(spaced, -1)
+	return withPadding[1 : len(withPadding)-1]
 }
 
 func readStdin() string {
