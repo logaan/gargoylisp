@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+go fmt lisp.go
+go run lisp.go
